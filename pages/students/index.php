@@ -8,7 +8,7 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
 }
 
 // Pagination settings
-$perPage = 5; // Number of students per page
+$perPage = 4; // Number of students per page
 $page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
 if ($page < 1) $page = 1;
 
