@@ -6,6 +6,11 @@ $courses = $stmt->fetchAll();
 // Get registered courses for current user
 $registeredCourses = getRegisteredCourses($pdo, $_SESSION['user_id']);
 $registeredCourseIds = array_column($registeredCourses, 'MaHP');
+
+// Initialize cart if not exists
+if (!isset($_SESSION['cart'])) {
+    $_SESSION['cart'] = [];
+}
 ?>
 
 <div class="row">
@@ -13,8 +18,11 @@ $registeredCourseIds = array_column($registeredCourses, 'MaHP');
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">Đăng ký Học phần</h4>
-                <a href="index.php?page=my-courses" class="btn btn-primary">
-                    <i class="fas fa-clipboard-list"></i> Xem học phần đã đăng ký
+                <a href="index.php?page=cart" class="btn btn-primary">
+                    <i class="fas fa-clipboard-list"></i> Xem học phần đã chọn
+                    <?php if (count($_SESSION['cart']) > 0): ?>
+                    <span class="badge bg-danger"><?php echo count($_SESSION['cart']); ?></span>
+                    <?php endif; ?>
                 </a>
             </div>
             <div class="card-body">
@@ -42,9 +50,13 @@ $registeredCourseIds = array_column($registeredCourses, 'MaHP');
                                                 <button class="btn btn-success btn-sm" disabled>
                                                     <i class="fas fa-check"></i> Đã đăng ký
                                                 </button>
+                                            <?php elseif (in_array($course['MaHP'], $_SESSION['cart'])): ?>
+                                                <a href="actions/cart-actions.php?action=remove&course_id=<?php echo $course['MaHP']; ?>" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-check"></i> Đã chọn
+                                                </a>
                                             <?php else: ?>
-                                                <a href="actions/direct-register.php?course_id=<?php echo $course['MaHP']; ?>" class="btn btn-primary btn-sm">
-                                                    <i class="fas fa-plus"></i> Đăng ký
+                                                <a href="actions/cart-actions.php?action=add&course_id=<?php echo $course['MaHP']; ?>" class="btn btn-primary btn-sm">
+                                                    <i class="fas fa-plus"></i> Chọn học phần
                                                 </a>
                                             <?php endif; ?>
                                         </td>

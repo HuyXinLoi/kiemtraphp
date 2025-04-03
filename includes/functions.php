@@ -69,7 +69,7 @@ function getCourseById($pdo, $maHP) {
 
 // Function to get registered courses for a student
 function getRegisteredCourses($pdo, $maSV) {
-    $stmt = $pdo->prepare("SELECT HocPhan.*, DangKy.NgayDK 
+    $stmt = $pdo->prepare("SELECT HocPhan.*, DangKy.NgayDK, DangKy.MaDK
                            FROM HocPhan 
                            JOIN ChiTietDangKy ON HocPhan.MaHP = ChiTietDangKy.MaHP
                            JOIN DangKy ON ChiTietDangKy.MaDK = DangKy.MaDK
@@ -128,10 +128,10 @@ function getCartItems($pdo) {
     return $items;
 }
 
-// Function to clear cart
-function clearCart() {
-    $_SESSION['cart'] = [];
-}
+// // Function to clear cart
+// function clearCart() {
+//     $_SESSION['cart'] = [];
+// }
 
 // Function to generate pagination links
 function generatePagination($currentPage, $totalPages, $urlPattern) {

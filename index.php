@@ -4,7 +4,7 @@ require_once 'config/database.php';
 require_once 'includes/functions.php';
 
 // Check if user is logged in for protected pages
-$protected_pages = ['dashboard.php', 'register-courses.php', 'my-courses.php'];
+$protected_pages = ['dashboard.php', 'register-courses.php', 'my-courses.php', 'cart.php'];
 $current_page = basename($_SERVER['PHP_SELF']);
 
 if (in_array($current_page, $protected_pages) && !isset($_SESSION['user_id'])) {
@@ -46,6 +46,9 @@ switch ($page) {
         break;
     case 'my-courses':
         include 'pages/courses/my-courses.php';
+        break;
+    case 'cart':
+        include 'pages/cart.php';
         break;
     case 'login':
         include 'pages/login.php';

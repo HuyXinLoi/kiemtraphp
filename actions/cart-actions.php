@@ -60,18 +60,10 @@ function addCourseToCart() {
     
     // Validate input
     if (empty($courseId)) {
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-            // AJAX request
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Mã học phần không hợp lệ']);
-            exit;
-        } else {
-            // Regular request
-            $_SESSION['message'] = 'Mã học phần không hợp lệ';
-            $_SESSION['message_type'] = 'danger';
-            header('Location: ../index.php?page=register-courses');
-            exit;
-        }
+        $_SESSION['message'] = 'Mã học phần không hợp lệ';
+        $_SESSION['message_type'] = 'danger';
+        header('Location: ../index.php?page=register-courses');
+        exit;
     }
     
     // Check if course exists
@@ -80,72 +72,35 @@ function addCourseToCart() {
     $course = $stmt->fetch();
     
     if (!$course) {
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-            // AJAX request
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Học phần không tồn tại']);
-            exit;
-        } else {
-            // Regular request
-            $_SESSION['message'] = 'Học phần không tồn tại';
-            $_SESSION['message_type'] = 'danger';
-            header('Location: ../index.php?page=register-courses');
-            exit;
-        }
+        $_SESSION['message'] = 'Học phần không tồn tại';
+        $_SESSION['message_type'] = 'danger';
+        header('Location: ../index.php?page=register-courses');
+        exit;
     }
     
     // Check if course is already registered
     if (isCourseRegistered($pdo, $_SESSION['user_id'], $courseId)) {
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-            // AJAX request
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Bạn đã đăng ký học phần này']);
-            exit;
-        } else {
-            // Regular request
-            $_SESSION['message'] = 'Bạn đã đăng ký học phần này';
-            $_SESSION['message_type'] = 'warning';
-            header('Location: ../index.php?page=register-courses');
-            exit;
-        }
+        $_SESSION['message'] = 'Bạn đã đăng ký học phần này';
+        $_SESSION['message_type'] = 'warning';
+        header('Location: ../index.php?page=register-courses');
+        exit;
     }
     
     // Check if course is available (has slots)
     if (isset($course['SoLuongDuKien']) && $course['SoLuongDuKien'] <= 0) {
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-            // AJAX request
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Học phần đã hết chỗ']);
-            exit;
-        } else {
-            // Regular request
-            $_SESSION['message'] = 'Học phần đã hết chỗ';
-            $_SESSION['message_type'] = 'warning';
-            header('Location: ../index.php?page=register-courses');
-            exit;
-        }
+        $_SESSION['message'] = 'Học phần đã hết chỗ';
+        $_SESSION['message_type'] = 'warning';
+        header('Location: ../index.php?page=register-courses');
+        exit;
     }
     
     // Add course to cart
     addToCart($courseId);
     
-    // Thay đổi thông báo khi thêm học phần
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-        // AJAX request
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true, 
-            'message' => 'Đã chọn học phần',
-            'count' => count($_SESSION['cart'])
-        ]);
-        exit;
-    } else {
-        // Regular request
-        $_SESSION['message'] = 'Đã chọn học phần';
-        $_SESSION['message_type'] = 'success';
-        header('Location: ../index.php?page=register-courses');
-        exit;
-    }
+    $_SESSION['message'] = 'Đã thêm học phần vào danh sách chọn';
+    $_SESSION['message_type'] = 'success';
+    header('Location: ../index.php?page=register-courses');
+    exit;
 }
 
 // Function to remove a course from cart
@@ -155,40 +110,19 @@ function removeCourseFromCart() {
     
     // Validate input
     if (empty($courseId)) {
-        if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-            // AJAX request
-            header('Content-Type: application/json');
-            echo json_encode(['success' => false, 'message' => 'Mã học phần không hợp lệ']);
-            exit;
-        } else {
-            // Regular request
-            $_SESSION['message'] = 'Mã học phần không hợp lệ';
-            $_SESSION['message_type'] = 'danger';
-            header('Location: ../index.php?page=cart');
-            exit;
-        }
+        $_SESSION['message'] = 'Mã học phần không hợp lệ';
+        $_SESSION['message_type'] = 'danger';
+        header('Location: ../index.php?page=cart');
+        exit;
     }
     
     // Remove course from cart
     removeFromCart($courseId);
     
-    // Thay đổi thông báo khi xóa học phần
-    if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
-        // AJAX request
-        header('Content-Type: application/json');
-        echo json_encode([
-            'success' => true, 
-            'message' => 'Đã bỏ chọn học phần',
-            'count' => isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0
-        ]);
-        exit;
-    } else {
-        // Regular request
-        $_SESSION['message'] = 'Đã bỏ chọn học phần';
-        $_SESSION['message_type'] = 'success';
-        header('Location: ../index.php?page=cart');
-        exit;
-    }
+    $_SESSION['message'] = 'Đã xóa học phần khỏi danh sách chọn';
+    $_SESSION['message_type'] = 'success';
+    header('Location: ../index.php?page=cart');
+    exit;
 }
 
 // Function to clear cart
@@ -196,8 +130,7 @@ function clearCart() {
     // Clear cart
     $_SESSION['cart'] = [];
     
-    // Thay đổi thông báo khi xóa tất cả học phần
-    $_SESSION['message'] = 'Đã bỏ chọn tất cả học phần';
+    $_SESSION['message'] = 'Đã xóa tất cả học phần khỏi danh sách chọn';
     $_SESSION['message_type'] = 'success';
     header('Location: ../index.php?page=register-courses');
     exit;
@@ -207,7 +140,7 @@ function clearCart() {
 function checkoutCart() {
     global $pdo;
     
-    // Thay đổi thông báo khi giỏ trống
+    // Check if cart is empty
     if (!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
         $_SESSION['message'] = 'Bạn chưa chọn học phần nào';
         $_SESSION['message_type'] = 'warning';

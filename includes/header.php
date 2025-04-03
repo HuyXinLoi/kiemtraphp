@@ -39,6 +39,14 @@
                 </ul>
                 <ul class="navbar-nav">
                     <?php if (isset($_SESSION['user_id'])): ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.php?page=cart">
+                            <i class="fas fa-clipboard-list"></i> Học phần đã chọn
+                            <?php if (isset($_SESSION['cart']) && count($_SESSION['cart']) > 0): ?>
+                            <span class="badge bg-danger"><?php echo count($_SESSION['cart']); ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             <?php echo $_SESSION['user_name']; ?>
