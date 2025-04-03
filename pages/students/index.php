@@ -7,8 +7,17 @@ if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
     exit;
 }
 
-// Get all students
-$students = getAllStudents($pdo);
+// Pagination settings
+$perPage = 5; // Number of students per page
+$page = isset($_GET['page_num']) ? (int)$_GET['page_num'] : 1;
+if ($page < 1) $page = 1;
+
+// Get total number of students
+$totalStudents = countAllStudents($pdo);
+$totalPages = ceil($totalStudents / $perPage);
+
+// Get students for current page
+$students = getAllStudents($pdo, $page, $perPage);
 ?>
 
 <div class="card">
@@ -70,6 +79,19 @@ $students = getAllStudents($pdo);
                 </tbody>
             </table>
         </div>
+        
+        <?php if ($totalPages > 1): ?>
+        <div class="d-flex justify-content-center mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination">
+                    <?php echo generatePagination($page, $totalPages, 'index.php?page=students&page_num=%d'); ?>
+                </ul>
+            </nav>
+        </div>
+        <div class="text-center mt-2">
+            <small class="text-muted">Hiển thị <?php echo count($students); ?> sinh viên trên tổng số <?php echo $totalStudents; ?> sinh viên</small>
+        </div>
+        <?php endif; ?>
     </div>
 </div>
 

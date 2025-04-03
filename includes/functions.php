@@ -14,13 +14,28 @@ function studentExists($pdo, $maSV) {
     return $stmt->fetchColumn() > 0;
 }
 
-// Function to get all students
-function getAllStudents($pdo) {
-    $stmt = $pdo->query("SELECT SinhVien.*, NganhHoc.TenNganh 
+// Function to get all students with pagination
+function getAllStudents($pdo, $page = 1, $perPage = 10) {
+    // Calculate offset
+    $offset = ($page - 1) * $perPage;
+    
+    // Get students for current page
+    $stmt = $pdo->prepare("SELECT SinhVien.*, NganhHoc.TenNganh 
                          FROM SinhVien 
                          LEFT JOIN NganhHoc ON SinhVien.MaNganh = NganhHoc.MaNganh
-                         ORDER BY SinhVien.MaSV");
+                         ORDER BY SinhVien.MaSV
+                         LIMIT :limit OFFSET :offset");
+    $stmt->bindValue(':limit', $perPage, PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+    $stmt->execute();
+    
     return $stmt->fetchAll();
+}
+
+// Function to count total students
+function countAllStudents($pdo) {
+    $stmt = $pdo->query("SELECT COUNT(*) FROM SinhVien");
+    return $stmt->fetchColumn();
 }
 
 // Function to get student by ID
@@ -117,4 +132,55 @@ function getCartItems($pdo) {
 function clearCart() {
     $_SESSION['cart'] = [];
 }
+
+// Function to generate pagination links
+function generatePagination($currentPage, $totalPages, $urlPattern) {
+    $links = '';
+    
+    // Previous button
+    if ($currentPage > 1) {
+        $links .= '<li class="page-item"><a class="page-link" href="' . sprintf($urlPattern, $currentPage - 1) . '">&laquo;</a></li>';
+    } else {
+        $links .= '<li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>';
+    }
+    
+    // Page numbers
+    $startPage = max(1, $currentPage - 2);
+    $endPage = min($totalPages, $currentPage + 2);
+    
+    // Always show first page
+    if ($startPage > 1) {
+        $links .= '<li class="page-item"><a class="page-link" href="' . sprintf($urlPattern, 1) . '">1</a></li>';
+        if ($startPage > 2) {
+            $links .= '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+        }
+    }
+    
+    // Page links
+    for ($i = $startPage; $i <= $endPage; $i++) {
+        if ($i == $currentPage) {
+            $links .= '<li class="page-item active"><a class="page-link" href="#">' . $i . '</a></li>';
+        } else {
+            $links .= '<li class="page-item"><a class="page-link" href="' . sprintf($urlPattern, $i) . '">' . $i . '</a></li>';
+        }
+    }
+    
+    // Always show last page
+    if ($endPage < $totalPages) {
+        if ($endPage < $totalPages - 1) {
+            $links .= '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+        }
+        $links .= '<li class="page-item"><a class="page-link" href="' . sprintf($urlPattern, $totalPages) . '">' . $totalPages . '</a></li>';
+    }
+    
+    // Next button
+    if ($currentPage < $totalPages) {
+        $links .= '<li class="page-item"><a class="page-link" href="' . sprintf($urlPattern, $currentPage + 1) . '">&raquo;</a></li>';
+    } else {
+        $links .= '<li class="page-item disabled"><a class="page-link" href="#">&raquo;</a></li>';
+    }
+    
+    return $links;
+}
 ?>
+
