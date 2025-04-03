@@ -53,9 +53,8 @@ $students = getAllStudents($pdo);
                                     <a href="index.php?page=student-edit&id=<?php echo $student['MaSV']; ?>" class="btn btn-primary btn-sm" data-bs-toggle="tooltip" title="Sửa">
                                         <i class="fas fa-edit"></i>
                                     </a>
-                                    <a href="actions/student-actions.php?action=delete&id=<?php echo $student['MaSV']; ?>" 
+                                    <a href="index.php?page=student-delete&id=<?php echo $student['MaSV']; ?>" 
                                        class="btn btn-danger btn-sm" 
-                                       onclick="confirmDelete(event, 'sinh viên')" 
                                        data-bs-toggle="tooltip" 
                                        title="Xóa">
                                         <i class="fas fa-trash"></i>

@@ -35,6 +35,9 @@ switch ($page) {
     case 'student-detail':
         include 'pages/students/detail.php';
         break;
+    case 'student-delete':
+        include 'pages/students/delete.php';
+        break;
     case 'courses':
         include 'pages/courses/index.php';
         break;
